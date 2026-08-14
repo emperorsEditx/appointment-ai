@@ -7,7 +7,7 @@ AI-powered appointment booking assistant built for the Senior Full Stack Develop
 - **Live Demo:** https://appointment-ai.awaiss.tech
 - **GitHub:** https://github.com/emperorsEditx/appointment-ai
 - **Database Schema:** https://dbdiagram.io/d/appointment-ai-6a7e2b96c6a866c9076495f6
-- **Demo Video:** [Loom link]
+- **Demo Video:** https://drive.google.com/file/d/17gkvNPztBiWFYpdX-ACmTIw4f3g9eMq6/view?usp=sharing
 
 ## Quick Overview
 
