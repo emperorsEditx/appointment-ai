@@ -18,7 +18,7 @@ export function ChatMessage({
     >
       {!isUser && (
         <div className="shadow-glow flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground overflow-hidden">
-          <Image src="/agent.svg" alt="Agent" width={20} height={20} />
+          <Image src="/agent.png" alt="Agent" width={25} height={25} />
         </div>
       )}
 
