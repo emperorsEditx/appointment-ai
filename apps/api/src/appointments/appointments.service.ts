@@ -15,6 +15,7 @@ export type BookingInput = {
   userId: string;
   preferredDate: string;
   preferredTime: string;
+  startAt?: string;
   service?: string;
 };
 
@@ -121,10 +122,19 @@ export class AppointmentsService {
   }
 
   async createFromIntent(input: BookingInput) {
-    const startAt = this.parseDateTime(
-      input.preferredDate,
-      input.preferredTime,
-    );
+    let startAt: Date;
+    if (input.startAt) {
+      // Client provided an ISO timestamp (in user's local timezone converted to UTC via toISOString())
+      startAt = new Date(input.startAt);
+      if (Number.isNaN(startAt.getTime())) {
+        throw new BadRequestException('Invalid startAt timestamp');
+      }
+    } else {
+      startAt = this.parseDateTime(
+        input.preferredDate,
+        input.preferredTime,
+      );
+    }
     const endAt = new Date(
       startAt.getTime() + DEFAULT_DURATION_MINUTES * 60_000,
     );

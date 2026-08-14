@@ -9,5 +9,9 @@ export class CreateAppointmentDto {
 
   @IsOptional()
   @IsString()
+  startAt?: string;
+
+  @IsOptional()
+  @IsString()
   service?: string;
 }

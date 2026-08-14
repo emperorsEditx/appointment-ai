@@ -18,6 +18,7 @@ export class AppointmentsController {
       userId: user.sub,
       preferredDate: dto.preferredDate,
       preferredTime: dto.preferredTime,
+      startAt: dto.startAt,
       service: dto.service?.trim() || undefined,
     });
 

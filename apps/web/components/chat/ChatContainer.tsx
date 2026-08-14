@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Skeleton } from "@/components/ui/skeleton"
 import { Pencil } from "lucide-react"
+import Image from "next/image";
 
 type ChatMessageMeta = {
   component: "calendar"
@@ -517,7 +518,7 @@ export function ChatContainer({ messages }: { messages?: ChatMessageItem[] }) {
               <div className="flex items-end justify-start gap-2">
                 <div className="shadow-glow flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground overflow-hidden">
                   {/* agent icon */}
-                  <img src="/agent.svg" alt="Agent" width={18} height={18} />
+                  <Image src="/agent.png" alt="Agent" width={25} height={25} />
                 </div>
                 <div className="rounded-2xl rounded-bl-md border border-border/60 bg-card px-4 py-3 shadow-sm">
                   <div className="flex gap-1">
