@@ -8,7 +8,7 @@ async function bootstrap() {
   const corsOrigin: string =
     process.env.CORS_ORIGIN ??
     process.env.NEXT_PUBLIC_API_URL ??
-    'http://localhost:3000';
+    'https://appointment-ai-taupe.vercel.app';
   const corsEnv: string = corsOrigin;
   const allowedOrigins: string[] = corsEnv
     .split(',')
@@ -29,7 +29,9 @@ async function bootstrap() {
         callback(null, true);
         return;
       }
-      callback(new Error('Origin not allowed by CORS'), false);
+      // don't throw an error here (causes 500 on preflight). Deny CORS silently and log.
+      console.warn(`CORS origin denied: ${origin}`);
+      callback(null, false);
     },
     credentials: true,
   });
