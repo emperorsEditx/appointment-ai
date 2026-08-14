@@ -5,34 +5,35 @@ import { AppModule } from './app.module';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  const corsOrigin: string =
-    process.env.CORS_ORIGIN ??
-    process.env.NEXT_PUBLIC_API_URL ??
-    'https://appointment-ai-taupe.vercel.app';
-  const corsEnv: string = corsOrigin;
-  const allowedOrigins: string[] = corsEnv
-    .split(',')
-    .map((s) => s.trim())
-    .filter(Boolean) as string[];
+
+  const allowedOrigins = [
+    'http://localhost:3000',
+    'https://appointment-ai-taupe.vercel.app',
+    ...(process.env.CORS_ORIGIN
+      ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim())
+      : []),
+  ].filter(Boolean);
 
   app.enableCors({
-    origin: (
-      origin: string | undefined,
-      callback: (err: Error | null, allow?: boolean) => void,
-    ) => {
-      // allow non-browser requests like curl/postman (no origin)
+    origin: (origin, callback) => {
+      // Allow requests without an Origin header
+      // (Postman, curl, server-to-server, etc.)
       if (!origin) {
-        callback(null, true);
-        return;
+        return callback(null, true);
       }
-      if (allowedOrigins.includes('*') || allowedOrigins.includes(origin)) {
-        callback(null, true);
-        return;
+
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
       }
-      // don't throw an error here (causes 500 on preflight). Deny CORS silently and log.
+
       console.warn(`CORS origin denied: ${origin}`);
-      callback(null, false);
+      return callback(null, false);
     },
+
+    methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],
+
+    allowedHeaders: ['Content-Type', 'Authorization'],
+
     credentials: true,
   });
 
@@ -44,6 +45,7 @@ async function bootstrap() {
   );
 
   const port = process.env.PORT ? Number(process.env.PORT) : 3001;
+
   await app.listen(port);
 }
 
