@@ -1,6 +1,29 @@
 # Appointment AI
 
-A full-stack AI appointment assistant prototype built for the Senior Full Stack Developer assessment. It combines a Next.js frontend, a NestJS API, PostgreSQL via Prisma, and Mistral-powered appointment parsing to let users chat naturally to create, review, and manage appointment bookings.
+AI-powered appointment booking assistant built for the Senior Full Stack Developer assessment.
+
+## 🔗 Links
+
+- **Live Demo:** https://appointment-ai.awaiss.tech
+- **GitHub:** https://github.com/emperorsEditx/appointment-ai
+- **Database Schema:** [dbdiagram.io link]
+- **Demo Video:** [Loom link]
+
+## Quick Overview
+
+Appointment AI is a full-stack SaaS-style appointment booking prototype that allows users to create and manage appointments through both natural-language AI conversations and traditional UI flows.
+
+### Core Stack
+
+- Next.js 16
+- React 19
+- NestJS
+- TypeScript
+- Prisma
+- PostgreSQL
+- Mistral AI
+- JWT Authentication
+- Tailwind CSS
 
 ## Overview
 
@@ -78,11 +101,14 @@ appointment-ai/
 │   ├── api/
 │   │   ├── src/
 │   │   ├── test/
+│   │   ├── utils/
 │   │   └── package.json
 │   └── web/
 │       ├── app/
 │       ├── components/
+│       ├── hooks/
 │       ├── lib/
+│       ├── public/
 │       └── package.json
 ├── prisma/
 │   ├── schema.prisma
@@ -207,10 +233,26 @@ Mistral is a practical choice for a prototype because it offers a straightforwar
 - This is a prototype and not production-scale infrastructure.
 - AI extraction is designed for practical booking intents, not complex enterprise scheduling rules.
 - Rate limiting and logging are intentionally lightweight for the assessment scope.
-- Deployment is not currently configured for a public live environment unless separately hosted.
+- The application is deployed and available through the public demo environment below.
 - Multi-tenant support is included in the schema but is still a simplified SaaS-oriented model rather than a full enterprise isolation design.
 
 ---
+
+**Application:** https://appointment-ai.awaiss.tech
+
+The application is deployed as a full-stack environment with the Next.js frontend and NestJS API connected to PostgreSQL and Mistral AI.
+
+### Demo Flow
+
+The recommended demo flow is:
+
+1. Create an account
+2. Log in
+3. Open the AI appointment assistant
+4. Request an appointment using natural language
+5. Confirm or modify the appointment
+6. View the appointment in the dashboard
+7. Test cancellation and appointment management
 
 ## Database Notes
 
