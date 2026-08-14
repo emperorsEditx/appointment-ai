@@ -80,15 +80,28 @@ export class ChatService {
 
     try {
       // helper: format datetimes in 12-hour form for user-facing replies
-      const fmt = (d: Date) =>
-        d.toLocaleString(undefined, {
+      const fmt = (d: Date) => {
+        const tz = (dto as any)?.clientTz as string | undefined;
+        const options: Intl.DateTimeFormatOptions = {
           weekday: 'short',
           month: 'short',
           day: 'numeric',
           hour: 'numeric',
           minute: '2-digit',
           hour12: true,
-        });
+        };
+        try {
+          if (tz) {
+            return new Intl.DateTimeFormat(undefined, {
+              ...options,
+              timeZone: tz,
+            }).format(d);
+          }
+        } catch (e) {
+          // if provided timezone is invalid, fall back to default
+        }
+        return new Intl.DateTimeFormat(undefined, options).format(d);
+      };
 
       const result = await this.mistral.extractAppointmentIntent(history);
       const { intent } = result;
