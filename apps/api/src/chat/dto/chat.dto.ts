@@ -1,4 +1,4 @@
-import { IsOptional, IsString } from 'class-validator';
+import { IsOptional, IsString, IsNumber } from 'class-validator';
 
 export class ChatDto {
   @IsString()
@@ -7,4 +7,16 @@ export class ChatDto {
   @IsOptional()
   @IsString()
   sessionId?: string;
+
+  @IsOptional()
+  @IsString()
+  clientTz?: string;
+
+  @IsOptional()
+  @IsNumber()
+  tzOffsetMinutes?: number;
+
+  @IsOptional()
+  @IsString()
+  clientNow?: string;
 }

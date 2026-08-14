@@ -71,13 +71,16 @@ export class AppointmentsService {
     newDate: string,
     newTime: string,
     service?: string | null,
+    startAtIso?: string | undefined,
   ) {
     const appointment = await this.prisma.appointment.findFirst({
       where: { id: appointmentId, tenantId },
     });
     if (!appointment) throw new BadRequestException('Appointment not found');
 
-    const startAt = this.parseDateTime(newDate, newTime);
+    const startAt = startAtIso
+      ? new Date(startAtIso)
+      : this.parseDateTime(newDate, newTime);
     const endAt = new Date(
       startAt.getTime() + DEFAULT_DURATION_MINUTES * 60_000,
     );

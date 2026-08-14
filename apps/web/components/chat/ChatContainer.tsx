@@ -249,13 +249,17 @@ export function ChatContainer({ messages }: { messages?: ChatMessageItem[] }) {
 
     try {
       const API = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000"
+      const tz = Intl.DateTimeFormat().resolvedOptions().timeZone
+      const tzOffset = new Date().getTimezoneOffset()
+      const clientNow = new Date().toISOString()
+
       const res = await fetch(`${API}/chat`, {
         method: "POST",
         headers: {
           "content-type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify({ message: text, sessionId }),
+        body: JSON.stringify({ message: text, sessionId, clientTz: tz, tzOffsetMinutes: tzOffset, clientNow }),
       })
 
       if (!res.ok) throw new Error((await res.text()) || res.statusText)

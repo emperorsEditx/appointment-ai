@@ -130,12 +130,55 @@ export class ChatService {
           }
 
           try {
+            // Compute startAt from client's timezone info if available on the DTO
+            let startAtOverride: string | undefined = undefined;
+            try {
+              const tzOffset =
+                typeof (dto as any).tzOffsetMinutes === 'number'
+                  ? (dto as any).tzOffsetMinutes
+                  : undefined;
+              if (
+                tzOffset != null &&
+                intent.preferredDate &&
+                intent.preferredTime
+              ) {
+                const [y, m, d] = intent.preferredDate!.split('-').map(Number);
+                // normalize time string
+                const normalize = (time: string) => {
+                  const hhmm = /^\d{2}:\d{2}$/;
+                  if (hhmm.test(time)) return time;
+                  const mm = time.match(/^(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)$/);
+                  if (mm) {
+                    let hour = Number(mm[1]);
+                    const minute = mm[2];
+                    const ampm = mm[3].toUpperCase();
+                    if (ampm === 'PM' && hour < 12) hour += 12;
+                    if (ampm === 'AM' && hour === 12) hour = 0;
+                    return `${String(hour).padStart(2, '0')}:${minute}`;
+                  }
+                  const simple = time.match(/^(\d{1,2}):(\d{2})$/);
+                  if (simple)
+                    return simple[1].padStart(2, '0') + ':' + simple[2];
+                  return time;
+                };
+                const normalized = normalize(intent.preferredTime!);
+                const [hourStr, minuteStr] = normalized.split(':');
+                const utcMs =
+                  Date.UTC(y, m - 1, d, Number(hourStr), Number(minuteStr)) +
+                  tzOffset * 60_000;
+                startAtOverride = new Date(utcMs).toISOString();
+              }
+            } catch (e) {
+              // ignore and fall back to server parsing
+            }
+
             const { appointment, alreadyExisted } =
               await this.appointments.createFromIntent({
                 tenantId,
                 userId,
                 preferredDate: intent.preferredDate!,
                 preferredTime: intent.preferredTime!,
+                startAt: startAtOverride,
                 service: intent.service ?? undefined,
               });
 
@@ -247,6 +290,56 @@ export class ChatService {
               intent.preferredDate,
               intent.preferredTime,
               intent.service ?? target.notes,
+              // compute startAt override from dto tz if present
+              (() => {
+                try {
+                  const tzOffset =
+                    typeof (dto as any).tzOffsetMinutes === 'number'
+                      ? (dto as any).tzOffsetMinutes
+                      : undefined;
+                  if (
+                    tzOffset != null &&
+                    intent.preferredDate &&
+                    intent.preferredTime
+                  ) {
+                    const [y, m, d] = intent
+                      .preferredDate!.split('-')
+                      .map(Number);
+                    const normalize = (time: string) => {
+                      const hhmm = /^\d{2}:\d{2}$/;
+                      if (hhmm.test(time)) return time;
+                      const mm = time.match(
+                        /^(\d{1,2}):(\d{2})\s*(AM|PM|am|pm)$/,
+                      );
+                      if (mm) {
+                        let hour = Number(mm[1]);
+                        const minute = mm[2];
+                        const ampm = mm[3].toUpperCase();
+                        if (ampm === 'PM' && hour < 12) hour += 12;
+                        if (ampm === 'AM' && hour === 12) hour = 0;
+                        return `${String(hour).padStart(2, '0')}:${minute}`;
+                      }
+                      const simple = time.match(/^(\d{1,2}):(\d{2})$/);
+                      if (simple)
+                        return simple[1].padStart(2, '0') + ':' + simple[2];
+                      return time;
+                    };
+                    const normalized = normalize(intent.preferredTime!);
+                    const [hourStr, minuteStr] = normalized.split(':');
+                    const utcMs =
+                      Date.UTC(
+                        y,
+                        m - 1,
+                        d,
+                        Number(hourStr),
+                        Number(minuteStr),
+                      ) +
+                      tzOffset * 60_000;
+                    return new Date(utcMs).toISOString();
+                  }
+                } catch {}
+                return undefined;
+              })(),
             );
 
             reply = `Updated your appointment to ${fmt(new Date(updated.startAt))}.`;
