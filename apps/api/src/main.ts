@@ -7,27 +7,31 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
   const allowedOrigins = [
-    'http://localhost:3000',
-    'https://appointment-ai-taupe.vercel.app',
     ...(process.env.CORS_ORIGIN
       ? process.env.CORS_ORIGIN.split(',').map((origin) => origin.trim())
       : []),
-  ].filter(Boolean);
+  ].filter((v): v is string => Boolean(v));
 
   app.enableCors({
-    origin: (origin, callback) => {
-      // Allow requests without an Origin header
-      // (Postman, curl, server-to-server, etc.)
+    origin: (
+      origin: string | undefined,
+      callback: (err: Error | null, allow?: boolean) => void,
+    ): void => {
+      // Allow requests without an Origin header (Postman, curl, server-to-server, etc.)
       if (!origin) {
-        return callback(null, true);
+        callback(null, true);
+        return;
       }
 
-      if (allowedOrigins.includes(origin)) {
-        return callback(null, true);
+      // Only check includes when origin is a string
+      if (typeof origin === 'string' && allowedOrigins.includes(origin)) {
+        callback(null, true);
+        return;
       }
 
       console.warn(`CORS origin denied: ${origin}`);
-      return callback(null, false);
+      callback(null, false);
+      return;
     },
 
     methods: ['GET', 'HEAD', 'PUT', 'PATCH', 'POST', 'DELETE', 'OPTIONS'],

@@ -28,6 +28,16 @@ export default function RootLayout({
         inter.variable
       )}
     >
+      <head>
+        <title>Appointment AI — Smart Booking Assistant</title>
+        <meta name="description" content="Appointment AI helps users book and manage appointments using natural language and AI assistance." />
+        <meta property="og:title" content="Appointment AI" />
+        <meta property="og:description" content="Book appointments using natural language with AI-powered parsing and scheduling." />
+        <meta property="og:image" content="/favicon.ico" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:image" content="/favicon.ico" />
+        <link rel="icon" href="/favicon.ico" />
+      </head>
       <body className="relative min-h-screen overflow-x-hidden">
         {/* Ambient Background Effects */}
         <div className="inset-0 pointer-events-none fixed z-0 overflow-hidden">
