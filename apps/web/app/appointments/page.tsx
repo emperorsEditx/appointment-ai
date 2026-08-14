@@ -13,9 +13,7 @@ import {
   CalendarPlus,
   AlertCircle,
   CalendarDays,
-  MapPin,
   Clock,
-  Loader2,
   List,
   LayoutGrid,
   ChevronLeft,
@@ -48,7 +46,6 @@ export default function AppointmentsPage() {
 
   const [activeFilter, setActiveFilter] = useState<FilterType>("UPCOMING")
   const [viewMode, setViewMode] = useState<ViewMode>("LIST")
-  const [isSyncing, setIsSyncing] = useState(false)
 
   // Calendar State
   const [currentMonth, setCurrentMonth] = useState(new Date())
@@ -82,18 +79,6 @@ export default function AppointmentsPage() {
       cancelled = true
     }
   }, [token, toast])
-
-  const handleSyncMap = () => {
-    setIsSyncing(true)
-    setTimeout(() => {
-      setIsSyncing(false)
-      toast({
-        title: "Synced successfully",
-        description: "Your appointments have been synced to the map.",
-        variant: "success",
-      })
-    }, 1500)
-  }
 
   // Client-side filtering
   const filteredAppointments = useMemo(() => {
@@ -174,19 +159,6 @@ export default function AppointmentsPage() {
                   </p>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={handleSyncMap}
-                    disabled={isSyncing || loading || !!error}
-                    className="shadow-sm"
-                  >
-                    {isSyncing ? (
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    ) : (
-                      <MapPin className="mr-2 h-4 w-4" />
-                    )}
-                    Sync to Map
-                  </Button>
                   <Link href="/dashboard">
                     <Button className="shadow-glow">
                       <CalendarPlus className="mr-2 h-4 w-4" />
