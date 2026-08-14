@@ -1,0 +1,134 @@
+generator client {
+  provider     = "prisma-client"
+  output       = "../apps/api/src/generated/prisma"
+  moduleFormat = "cjs"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Tenant {
+  id                String             @id @default(uuid()) @db.Uuid
+  name              String             @db.VarChar(100)
+  slug              String             @unique @db.VarChar(100)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  aiInteractionLogs AiInteractionLog[]
+  appointments      Appointment[]
+  chatSessions      ChatSession[]
+  users             User[]
+
+  @@map("tenants")
+}
+
+model User {
+  id           String             @id @default(uuid()) @db.Uuid
+  tenantId     String             @db.Uuid
+  name         String             @db.VarChar(100)
+  email        String             @db.VarChar(255)
+  passwordHash String             @db.VarChar(255)
+  role         UserRole           @default(USER)
+  createdAt    DateTime           @default(now())
+  updatedAt    DateTime           @updatedAt
+  aiLogs       AiInteractionLog[]
+  appointments Appointment[]
+  chatSessions ChatSession[]
+  tenant       Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, email])
+  @@index([tenantId])
+  @@map("users")
+}
+
+model Appointment {
+  id        String            @id @default(uuid()) @db.Uuid
+  tenantId  String            @db.Uuid
+  userId    String            @db.Uuid
+  startAt   DateTime
+  endAt     DateTime
+  status    AppointmentStatus @default(CONFIRMED)
+  notes     String?
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+  tenant    Tenant            @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, startAt])
+  @@index([tenantId, status])
+  @@index([userId])
+  @@map("appointments")
+}
+
+model ChatSession {
+  id        String             @id @default(uuid()) @db.Uuid
+  tenantId  String             @db.Uuid
+  userId    String             @db.Uuid
+  title     String?            @db.VarChar(255)
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  aiLogs    AiInteractionLog[]
+  messages  ChatMessage[]
+  tenant    Tenant             @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user      User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, userId])
+  @@map("chat_sessions")
+}
+
+model ChatMessage {
+  id        String      @id @default(uuid()) @db.Uuid
+  sessionId String      @db.Uuid
+  role      MessageRole
+  content   String
+  createdAt DateTime    @default(now())
+  session   ChatSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@index([createdAt])
+  @@map("chat_messages")
+}
+
+model AiInteractionLog {
+  id           String       @id @default(uuid()) @db.Uuid
+  tenantId     String       @db.Uuid
+  userId       String?      @db.Uuid
+  sessionId    String?      @db.Uuid
+  model        String       @db.VarChar(100)
+  input        String
+  output       String?
+  status       AiLogStatus
+  latencyMs    Int?
+  inputTokens  Int?
+  outputTokens Int?
+  errorMessage String?
+  createdAt    DateTime     @default(now())
+  session      ChatSession? @relation(fields: [sessionId], references: [id])
+  tenant       Tenant       @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user         User?        @relation(fields: [userId], references: [id])
+
+  @@index([tenantId])
+  @@index([sessionId])
+  @@index([createdAt])
+  @@map("ai_interaction_logs")
+}
+
+enum UserRole {
+  OWNER
+  USER
+}
+
+enum AppointmentStatus {
+  CONFIRMED
+  CANCELLED
+}
+
+enum MessageRole {
+  USER
+  ASSISTANT
+}
+
+enum AiLogStatus {
+  SUCCESS
+  FAILED
+}
