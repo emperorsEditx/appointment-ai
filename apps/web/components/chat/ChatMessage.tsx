@@ -1,4 +1,7 @@
-import { Sparkles, UserRound } from "lucide-react"
+"use client"
+
+import { UserRound } from "lucide-react"
+import Image from "next/image"
 
 export function ChatMessage({
   text,
@@ -14,8 +17,8 @@ export function ChatMessage({
       className={`flex items-end gap-2 ${isUser ? "justify-end" : "justify-start"}`}
     >
       {!isUser && (
-        <div className="shadow-glow flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-          <Sparkles className="h-4 w-4" />
+        <div className="shadow-glow flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground overflow-hidden">
+          <Image src="/favicon.ico" alt="Agent" width={20} height={20} />
         </div>
       )}
 

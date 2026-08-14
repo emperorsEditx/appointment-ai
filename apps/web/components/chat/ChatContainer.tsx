@@ -515,8 +515,9 @@ export function ChatContainer({ messages }: { messages?: ChatMessageItem[] }) {
             {/* Typing Indicator */}
             {isTyping && (
               <div className="flex items-end justify-start gap-2">
-                <div className="shadow-glow flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
-                  <Sparkles className="h-4 w-4" />
+                <div className="shadow-glow flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground overflow-hidden">
+                  {/* agent icon */}
+                  <img src="/favicon.ico" alt="Agent" width={18} height={18} />
                 </div>
                 <div className="rounded-2xl rounded-bl-md border border-border/60 bg-card px-4 py-3 shadow-sm">
                   <div className="flex gap-1">

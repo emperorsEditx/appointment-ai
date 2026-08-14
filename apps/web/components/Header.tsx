@@ -11,8 +11,8 @@ import {
   Menu,
   NotebookText,
   Settings,
-  Sparkles,
 } from "lucide-react"
+import Image from "next/image"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -203,9 +203,9 @@ export function Header() {
     <aside className="sticky top-0 hidden h-screen w-72 shrink-0 border-r border-border/60 bg-background/80 backdrop-blur-xl md:flex">
       <div className="flex h-full w-full flex-col">
         <div className="border-b border-border/60 p-4">
-          <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground">
-              <Sparkles className="h-4 w-4" />
+            <Link href="/dashboard" className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-primary text-primary-foreground overflow-hidden">
+              <Image src="/favicon.ico" alt="Appointment AI" width={28} height={28} />
             </div>
             <div>
               <div className="text-sm font-medium text-muted-foreground">Workspace</div>
